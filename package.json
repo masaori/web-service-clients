@@ -2,7 +2,8 @@
   "name": "web-service-clients",
   "version": "1.0.0",
   "description": "各種Web Serviceのクライアント寄せ集め",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "type": "module",
   "scripts": {
     "test": "jest"
   },

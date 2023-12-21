@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { PromisedResult, UnknownRuntimeError, unknownRuntimeError } from '../../_shared/error'
+import { PromisedResult, UnknownRuntimeError, unknownRuntimeError } from '../_shared/error'
 import { Ok } from '@sniptt/monads'
 
 export class JsonDatabaseClient {

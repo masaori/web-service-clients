@@ -3,7 +3,7 @@ import fs from 'fs'
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer'
 import imageSizeFromBuffer from 'buffer-image-size'
 
-import amazonCookiesJson from '../../../read.amazon.co.jp.cookies.json'
+import amazonCookiesJson from '../../read.amazon.co.jp.cookies.json'
 
 export class PuppeteerClient {
   private browser: Browser | null = null
