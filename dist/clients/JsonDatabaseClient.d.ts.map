@@ -1,0 +1,1 @@
+{"version":3,"file":"JsonDatabaseClient.d.ts","sourceRoot":"","sources":["../../src/clients/JsonDatabaseClient.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,cAAc,EAAE,mBAAmB,EAAuB,MAAM,kBAAkB,CAAA;AAG3F,qBAAa,kBAAkB;IACjB,OAAO,CAAC,QAAQ,CAAC,qBAAqB;gBAArB,qBAAqB,EAAE,MAAM;IAE1D,IAAI,kBAAyB,MAAM,8CAmBlC;IAED,KAAK,kBAAyB,MAAM,oBAAkB,eAAe,IAAI,EAAE,mBAAmB,CAAC,CAiB9F;CACF"}
