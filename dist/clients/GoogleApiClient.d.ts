@@ -44,5 +44,6 @@ export declare class GoogleApiClient {
     }>;
     updateFormInfo(formId: string, info: forms_v1.Schema$Info): Promise<forms_v1.Schema$BatchUpdateFormResponse>;
     createItemsToForm(formId: string, items: forms_v1.Schema$Item[]): Promise<forms_v1.Schema$BatchUpdateFormResponse>;
+    moveDriveFileToDriveFolder(fileId: string, folderId: string): Promise<void>;
 }
 //# sourceMappingURL=GoogleApiClient.d.ts.map

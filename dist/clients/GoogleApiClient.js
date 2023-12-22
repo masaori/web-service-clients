@@ -388,6 +388,19 @@ class GoogleApiClient {
             return response.data;
         });
     }
+    moveDriveFileToDriveFolder(fileId, folderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authorize();
+            if (!this.driveApi) {
+                throw new Error('drive is not initialized');
+            }
+            yield this.driveApi.files.update({
+                fileId,
+                addParents: folderId,
+                removeParents: 'root',
+            });
+        });
+    }
 }
 exports.GoogleApiClient = GoogleApiClient;
 //# sourceMappingURL=GoogleApiClient.js.map

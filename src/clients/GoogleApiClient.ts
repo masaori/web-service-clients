@@ -467,4 +467,18 @@ export class GoogleApiClient {
 
     return response.data
   }
+
+  async moveDriveFileToDriveFolder(fileId: string, folderId: string): Promise<void> {
+    await this.authorize()
+
+    if (!this.driveApi) {
+      throw new Error('drive is not initialized')
+    }
+
+    await this.driveApi.files.update({
+      fileId,
+      addParents: folderId,
+      removeParents: 'root',
+    })
+  }
 }
