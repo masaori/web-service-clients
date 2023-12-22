@@ -379,6 +379,43 @@ export class GoogleApiClient {
     }
   }
 
+  async deleteSheet(spreadsheetId: string, sheetTitle: string): Promise<void> {
+    await this.authorize()
+
+    if (!this.sheetsApi) {
+      throw new Error('sheets is not initialized')
+    }
+
+    // Get spreadsheet info
+    const spreadsheet = await this.sheetsApi.spreadsheets.get({
+      spreadsheetId,
+      fields: 'sheets(properties(sheetId,title))',
+    })
+
+    if (!spreadsheet.data.sheets) {
+      throw new Error('sheets is not found')
+    }
+
+    const sheet = spreadsheet.data.sheets.find((sheet) => sheet.properties?.title === sheetTitle)
+
+    if (!sheet) {
+      throw new Error('sheet is not found')
+    }
+
+    await this.sheetsApi.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            deleteSheet: {
+              sheetId: sheet.properties?.sheetId,
+            },
+          },
+        ],
+      },
+    })
+  }
+
   async createForm(title: string, documentTitle: string): Promise<{
     formId: string
     formUrl: string

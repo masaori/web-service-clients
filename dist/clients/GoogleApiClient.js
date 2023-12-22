@@ -312,6 +312,39 @@ class GoogleApiClient {
             };
         });
     }
+    deleteSheet(spreadsheetId, sheetTitle) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authorize();
+            if (!this.sheetsApi) {
+                throw new Error('sheets is not initialized');
+            }
+            // Get spreadsheet info
+            const spreadsheet = yield this.sheetsApi.spreadsheets.get({
+                spreadsheetId,
+                fields: 'sheets(properties(sheetId,title))',
+            });
+            if (!spreadsheet.data.sheets) {
+                throw new Error('sheets is not found');
+            }
+            const sheet = spreadsheet.data.sheets.find((sheet) => { var _a; return ((_a = sheet.properties) === null || _a === void 0 ? void 0 : _a.title) === sheetTitle; });
+            if (!sheet) {
+                throw new Error('sheet is not found');
+            }
+            yield this.sheetsApi.spreadsheets.batchUpdate({
+                spreadsheetId,
+                requestBody: {
+                    requests: [
+                        {
+                            deleteSheet: {
+                                sheetId: (_a = sheet.properties) === null || _a === void 0 ? void 0 : _a.sheetId,
+                            },
+                        },
+                    ],
+                },
+            });
+        });
+    }
     createForm(title, documentTitle) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {

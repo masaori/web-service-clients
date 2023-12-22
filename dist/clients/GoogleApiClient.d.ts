@@ -36,6 +36,7 @@ export declare class GoogleApiClient {
         sheetId: number;
         spreadsheetUrl: string;
     }>;
+    deleteSheet(spreadsheetId: string, sheetTitle: string): Promise<void>;
     createForm(title: string, documentTitle: string): Promise<{
         formId: string;
         formUrl: string;
