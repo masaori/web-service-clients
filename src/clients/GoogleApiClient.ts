@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { google, sheets_v4, drive_v3 } from 'googleapis'
+import { google, sheets_v4, drive_v3, forms_v1 } from 'googleapis'
 
 export class GoogleApiClient {
   constructor(public readonly googleServiceAccountJsonPath: string) {
@@ -12,6 +12,8 @@ export class GoogleApiClient {
   private sheetsApi: sheets_v4.Sheets | null = null
 
   private driveApi: drive_v3.Drive | null = null
+
+  private formsApi: forms_v1.Forms | null = null
 
   private async authorize() {
     if (this.sheetsApi || this.driveApi) {
@@ -45,6 +47,7 @@ export class GoogleApiClient {
     await jwtClient.authorize()
     this.sheetsApi = google.sheets({ version: 'v4', auth: jwtClient })
     this.driveApi = google.drive({ version: 'v3', auth: jwtClient })
+    this.formsApi = google.forms({ version: 'v1', auth: jwtClient })
   }
 
   async getSheetContent(spreadsheetId: string, sheetTitle: string, range: string): Promise<(string | number)[][]> {
@@ -374,5 +377,94 @@ export class GoogleApiClient {
       sheetId,
       spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit#gid=${sheetId}`,
     }
+  }
+
+  async createForm(title: string): Promise<{
+    formId: string
+    formUrl: string
+    linkedSheetId: string
+    responderUri: string
+  }> {
+    await this.authorize()
+
+    if (!this.formsApi) {
+      throw new Error('forms is not initialized')
+    }
+
+    const response = await this.formsApi.forms.create({
+      requestBody: {
+        info: {
+          title
+        },
+      },
+      fields: 'formId,linkedSheetId,responderUri',
+    })
+
+    if (!response.data.formId) {
+      throw new Error('formId is not found')
+    }
+
+    // if (!response.data.linkedSheetId) {
+    //   throw new Error('linkedSheetId is not found')
+    // }
+
+    if (!response.data.responderUri) {
+      throw new Error('responderUri is not found')
+    }
+
+    return {
+      formId: response.data.formId,
+      formUrl: `https://docs.google.com/forms/d/${response.data.formId}/edit`,
+      linkedSheetId: response.data.linkedSheetId ?? '',
+      responderUri: response.data.responderUri,
+    }
+  }
+
+  async updateFormInfo(formId: string, info: forms_v1.Schema$Info): Promise<forms_v1.Schema$BatchUpdateFormResponse> {
+    await this.authorize()
+
+    if (!this.formsApi) {
+      throw new Error('forms is not initialized')
+    }
+
+    const response = await this.formsApi.forms.batchUpdate({
+      formId,
+      requestBody: {
+        requests: [
+          {
+            updateFormInfo: {
+              info,
+              updateMask: '*',
+            },
+          },
+        ],
+      },
+    })
+
+    return response.data
+  }
+
+  async createItemsToForm(formId: string, items: forms_v1.Schema$Item[]): Promise<forms_v1.Schema$BatchUpdateFormResponse> {
+    await this.authorize()
+
+    if (!this.formsApi) {
+      throw new Error('forms is not initialized')
+    }
+
+    const response = await this.formsApi.forms.batchUpdate({
+      formId,
+      requestBody: {
+        requests: items.map((item, i) => ({
+          createItem: {
+            item,
+            location: {
+              index: i,
+            },
+          },
+        })),
+      },
+    })
+
+    return response.data
   }
 }

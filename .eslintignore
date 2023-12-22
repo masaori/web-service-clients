@@ -8,5 +8,6 @@ coverage
 jest.config.js
 setupJest.js
 jest.d.ts
+.eslintrc.cjs
 node_modules
 tmp

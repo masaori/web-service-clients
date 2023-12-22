@@ -1,31 +1,9 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint',
-    'jest-formatting',
-    'no-type-assertion',
-    'import',
-    'unused-imports',
-    '@graphql-eslint',
-  ],
+  plugins: ['@typescript-eslint', 'jest-formatting', 'no-type-assertion', 'import', 'unused-imports'],
   root: true,
 
   overrides: [
-    {
-      files: ['schema.graphql'],
-      parser: '@graphql-eslint/eslint-plugin',
-      extends: 'plugin:@graphql-eslint/schema-recommended',
-      parserOptions: {
-        schema:
-          './src/adapter/entry-points/express/handlers/codex-v2/schema.graphql',
-      },
-      rules: {
-        '@graphql-eslint/no-unreachable-types': 'off',
-        '@graphql-eslint/require-description': 'off',
-        '@graphql-eslint/strict-id-in-types': 'off',
-        '@graphql-eslint/no-typename-prefix': 'off',
-      },
-    },
     {
       files: ['*.ts', '*.tsx'],
       parser: '@typescript-eslint/parser',
