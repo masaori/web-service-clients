@@ -1,10 +1,11 @@
 import { ElementHandle } from 'puppeteer';
 export declare class PuppeteerClient {
     private absoluteScreenshotDirectoryPath;
+    readonly amazonCookiesJsonPath: string;
     private browser;
     private pageByUrl;
     private captureResultByUrl;
-    constructor(absoluteScreenshotDirectoryPath: string);
+    constructor(absoluteScreenshotDirectoryPath: string, amazonCookiesJsonPath: string);
     private launchBrowser;
     private clickPointWithRetry;
     openPageByUrl: (url: string) => Promise<void>;

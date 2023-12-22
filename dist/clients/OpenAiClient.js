@@ -17,7 +17,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const openai_1 = require("openai");
 class OpenAiClient {
-    constructor() {
+    constructor(openAiApiKeyFilePath) {
+        this.openAiApiKeyFilePath = openAiApiKeyFilePath;
         this.createEmbedding = (text) => __awaiter(this, void 0, void 0, function* () {
             const result = yield this.openAiClient.embeddings.create({
                 model: 'text-embedding-ada-002',
@@ -38,8 +39,10 @@ class OpenAiClient {
             }
             return result.choices[0].message;
         });
-        // './openapi_key.txt'
-        const OPENAI_API_KEY = fs_1.default.readFileSync(path_1.default.join(__dirname, '..', '..', '..', 'openapi_key.txt'), 'utf8').trim();
+        if (!path_1.default.isAbsolute(openAiApiKeyFilePath)) {
+            throw new Error(`openai api key file path must be absolute: ${openAiApiKeyFilePath}`);
+        }
+        const OPENAI_API_KEY = fs_1.default.readFileSync(openAiApiKeyFilePath, 'utf-8').trim();
         this.openAiClient = new openai_1.OpenAI({
             apiKey: OPENAI_API_KEY,
         });

@@ -36,9 +36,10 @@ exports.GoogleCloudVisionClient = void 0;
 const path = __importStar(require("path"));
 const vision_1 = require("@google-cloud/vision");
 class GoogleCloudVisionClient {
-    constructor() {
+    constructor(googleServiceAccountJsonPath) {
+        this.googleServiceAccountJsonPath = googleServiceAccountJsonPath;
         this.googleCloudVisionClient = new vision_1.ImageAnnotatorClient({
-            keyFilename: path.resolve('./google-service-account.json'),
+            keyFilename: this.googleServiceAccountJsonPath,
         });
         this.fullTextAnnotationByImagePath = {};
         this.getFullTextAnnotation = (imagePath, options) => __awaiter(this, void 0, void 0, function* () {
@@ -66,6 +67,9 @@ class GoogleCloudVisionClient {
             this.fullTextAnnotationByImagePath[imagePath] = fullTextAnnotation.pages[0];
             return fullTextAnnotation.pages[0];
         });
+        if (!path.isAbsolute(googleServiceAccountJsonPath)) {
+            throw new Error(`google service account json path must be absolute: ${googleServiceAccountJsonPath}`);
+        }
     }
 }
 exports.GoogleCloudVisionClient = GoogleCloudVisionClient;

@@ -1,4 +1,6 @@
 export declare class GoogleApiClient {
+    readonly googleServiceAccountJsonPath: string;
+    constructor(googleServiceAccountJsonPath: string);
     private sheetsApi;
     private driveApi;
     private authorize;

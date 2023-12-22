@@ -17,16 +17,20 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const googleapis_1 = require("googleapis");
 class GoogleApiClient {
-    constructor() {
+    constructor(googleServiceAccountJsonPath) {
+        this.googleServiceAccountJsonPath = googleServiceAccountJsonPath;
         this.sheetsApi = null;
         this.driveApi = null;
+        if (!fs_1.default.existsSync(this.googleServiceAccountJsonPath)) {
+            throw new Error(`google service account json is not found: ${this.googleServiceAccountJsonPath}`);
+        }
     }
     authorize() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.sheetsApi || this.driveApi) {
                 return;
             }
-            const serviceAccountCredentialJson = fs_1.default.readFileSync(path_1.default.join(__dirname, '../../../google-service-account.json'), 'utf-8');
+            const serviceAccountCredentialJson = fs_1.default.readFileSync(path_1.default.resolve(this.googleServiceAccountJsonPath), 'utf-8');
             const serviceAccountCredentials = JSON.parse(serviceAccountCredentialJson);
             if (!serviceAccountCredentials ||
                 typeof serviceAccountCredentials !== 'object' ||

@@ -17,10 +17,10 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const buffer_image_size_1 = __importDefault(require("buffer-image-size"));
-const read_amazon_co_jp_cookies_json_1 = __importDefault(require("../../read.amazon.co.jp.cookies.json"));
 class PuppeteerClient {
-    constructor(absoluteScreenshotDirectoryPath) {
+    constructor(absoluteScreenshotDirectoryPath, amazonCookiesJsonPath) {
         this.absoluteScreenshotDirectoryPath = absoluteScreenshotDirectoryPath;
+        this.amazonCookiesJsonPath = amazonCookiesJsonPath;
         this.browser = null;
         this.pageByUrl = {};
         this.captureResultByUrl = {};
@@ -47,6 +47,7 @@ class PuppeteerClient {
             }
         });
         this.openPageByUrl = (url) => __awaiter(this, void 0, void 0, function* () {
+            const amazonCookiesJson = JSON.parse(fs_1.default.readFileSync(this.amazonCookiesJsonPath, 'utf-8'));
             yield this.launchBrowser();
             if (!this.browser) {
                 throw new Error('[PuppeteerClient]: Failed to launch browser');
@@ -55,7 +56,7 @@ class PuppeteerClient {
                 return;
             }
             const page = yield this.browser.newPage();
-            yield page.setCookie(...read_amazon_co_jp_cookies_json_1.default);
+            yield page.setCookie(...amazonCookiesJson);
             yield page.setViewport({ width: 1600, height: 900 });
             this.pageByUrl[url] = page;
             yield page.goto(url);
@@ -130,6 +131,9 @@ class PuppeteerClient {
         console.log(`[PuppeteerClient]: absoluteScreenshotDirectoryPath: ${absoluteScreenshotDirectoryPath}`);
         if (!fs_1.default.existsSync(this.absoluteScreenshotDirectoryPath)) {
             throw new Error(`[PuppeteerClient]: Directory does not exist: ${this.absoluteScreenshotDirectoryPath}`);
+        }
+        if (!fs_1.default.existsSync(this.amazonCookiesJsonPath)) {
+            throw new Error(`[PuppeteerClient]: File does not exist: ${this.amazonCookiesJsonPath}`);
         }
     }
 }
