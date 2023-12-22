@@ -21,6 +21,7 @@ class GoogleApiClient {
         this.googleServiceAccountJsonPath = googleServiceAccountJsonPath;
         this.sheetsApi = null;
         this.driveApi = null;
+        this.formsApi = null;
         if (!fs_1.default.existsSync(this.googleServiceAccountJsonPath)) {
             throw new Error(`google service account json is not found: ${this.googleServiceAccountJsonPath}`);
         }
@@ -46,6 +47,7 @@ class GoogleApiClient {
             yield jwtClient.authorize();
             this.sheetsApi = googleapis_1.google.sheets({ version: 'v4', auth: jwtClient });
             this.driveApi = googleapis_1.google.drive({ version: 'v3', auth: jwtClient });
+            this.formsApi = googleapis_1.google.forms({ version: 'v1', auth: jwtClient });
         });
     }
     getSheetContent(spreadsheetId, sheetTitle, range) {
@@ -308,6 +310,82 @@ class GoogleApiClient {
                 sheetId,
                 spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit#gid=${sheetId}`,
             };
+        });
+    }
+    createForm(title) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authorize();
+            if (!this.formsApi) {
+                throw new Error('forms is not initialized');
+            }
+            const response = yield this.formsApi.forms.create({
+                requestBody: {
+                    info: {
+                        title
+                    },
+                },
+                fields: 'formId,linkedSheetId,responderUri',
+            });
+            if (!response.data.formId) {
+                throw new Error('formId is not found');
+            }
+            // if (!response.data.linkedSheetId) {
+            //   throw new Error('linkedSheetId is not found')
+            // }
+            if (!response.data.responderUri) {
+                throw new Error('responderUri is not found');
+            }
+            return {
+                formId: response.data.formId,
+                formUrl: `https://docs.google.com/forms/d/${response.data.formId}/edit`,
+                linkedSheetId: (_a = response.data.linkedSheetId) !== null && _a !== void 0 ? _a : '',
+                responderUri: response.data.responderUri,
+            };
+        });
+    }
+    updateFormInfo(formId, info) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authorize();
+            if (!this.formsApi) {
+                throw new Error('forms is not initialized');
+            }
+            const response = yield this.formsApi.forms.batchUpdate({
+                formId,
+                requestBody: {
+                    requests: [
+                        {
+                            updateFormInfo: {
+                                info,
+                                updateMask: '*',
+                            },
+                        },
+                    ],
+                },
+            });
+            return response.data;
+        });
+    }
+    createItemsToForm(formId, items) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authorize();
+            if (!this.formsApi) {
+                throw new Error('forms is not initialized');
+            }
+            const response = yield this.formsApi.forms.batchUpdate({
+                formId,
+                requestBody: {
+                    requests: items.map((item, i) => ({
+                        createItem: {
+                            item,
+                            location: {
+                                index: i,
+                            },
+                        },
+                    })),
+                },
+            });
+            return response.data;
         });
     }
 }

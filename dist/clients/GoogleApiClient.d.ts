@@ -1,8 +1,10 @@
+import { forms_v1 } from 'googleapis';
 export declare class GoogleApiClient {
     readonly googleServiceAccountJsonPath: string;
     constructor(googleServiceAccountJsonPath: string);
     private sheetsApi;
     private driveApi;
+    private formsApi;
     private authorize;
     getSheetContent(spreadsheetId: string, sheetTitle: string, range: string): Promise<(string | number)[][]>;
     updateSheetContent(spreadsheetId: string, sheetTitle: string, range: string, values: (string | number)[][]): Promise<(string | number)[][]>;
@@ -34,5 +36,13 @@ export declare class GoogleApiClient {
         sheetId: number;
         spreadsheetUrl: string;
     }>;
+    createForm(title: string): Promise<{
+        formId: string;
+        formUrl: string;
+        linkedSheetId: string;
+        responderUri: string;
+    }>;
+    updateFormInfo(formId: string, info: forms_v1.Schema$Info): Promise<forms_v1.Schema$BatchUpdateFormResponse>;
+    createItemsToForm(formId: string, items: forms_v1.Schema$Item[]): Promise<forms_v1.Schema$BatchUpdateFormResponse>;
 }
 //# sourceMappingURL=GoogleApiClient.d.ts.map
