@@ -312,7 +312,7 @@ class GoogleApiClient {
             };
         });
     }
-    createForm(title) {
+    createForm(title, documentTitle) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             yield this.authorize();
@@ -322,7 +322,8 @@ class GoogleApiClient {
             const response = yield this.formsApi.forms.create({
                 requestBody: {
                     info: {
-                        title
+                        title,
+                        documentTitle,
                     },
                 },
                 fields: 'formId,linkedSheetId,responderUri',

@@ -379,7 +379,7 @@ export class GoogleApiClient {
     }
   }
 
-  async createForm(title: string): Promise<{
+  async createForm(title: string, documentTitle: string): Promise<{
     formId: string
     formUrl: string
     linkedSheetId: string
@@ -394,7 +394,8 @@ export class GoogleApiClient {
     const response = await this.formsApi.forms.create({
       requestBody: {
         info: {
-          title
+          title,
+          documentTitle,
         },
       },
       fields: 'formId,linkedSheetId,responderUri',

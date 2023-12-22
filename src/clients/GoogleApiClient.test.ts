@@ -14,6 +14,7 @@ describe('GoogleApiClient', () => {
     it('should return a google maps client', async () => {
       const createResult = await googleApiClient.createForm(
         'Test form',
+         'Test form updated document title',
       );
 
       console.log(createResult)
@@ -24,7 +25,6 @@ describe('GoogleApiClient', () => {
         {
           title: 'Test form updated',
           description: 'Test form updated',
-          documentTitle: 'Test form updated document title',
         },
       );
 

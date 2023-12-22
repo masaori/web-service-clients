@@ -36,7 +36,7 @@ export declare class GoogleApiClient {
         sheetId: number;
         spreadsheetUrl: string;
     }>;
-    createForm(title: string): Promise<{
+    createForm(title: string, documentTitle: string): Promise<{
         formId: string;
         formUrl: string;
         linkedSheetId: string;

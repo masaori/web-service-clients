@@ -42,13 +42,12 @@ describe('GoogleApiClient', () => {
     });
     describe('create and update form', () => {
         it('should return a google maps client', () => __awaiter(void 0, void 0, void 0, function* () {
-            const createResult = yield googleApiClient.createForm('Test form');
+            const createResult = yield googleApiClient.createForm('Test form', 'Test form updated document title');
             console.log(createResult);
             expect(createResult).toBeDefined();
             const updateResult = yield googleApiClient.updateFormInfo(createResult.formId, {
                 title: 'Test form updated',
                 description: 'Test form updated',
-                documentTitle: 'Test form updated document title',
             });
             console.log(updateResult);
             expect(updateResult).toBeDefined();
