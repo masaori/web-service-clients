@@ -3,8 +3,6 @@ import fs from 'fs'
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer'
 import imageSizeFromBuffer from 'buffer-image-size'
 
-import amazonCookiesJson from '../../read.amazon.co.jp.cookies.json'
-
 export class PuppeteerClient {
   private browser: Browser | null = null
 
@@ -12,11 +10,15 @@ export class PuppeteerClient {
 
   private captureResultByUrl: Record<string, { imageFilePath: string; imageWidth: number; imageHeight: number }> = {}
 
-  constructor(private absoluteScreenshotDirectoryPath: string) {
+  constructor(private absoluteScreenshotDirectoryPath: string, public readonly amazonCookiesJsonPath: string) {
     console.log(`[PuppeteerClient]: absoluteScreenshotDirectoryPath: ${absoluteScreenshotDirectoryPath}`)
 
     if (!fs.existsSync(this.absoluteScreenshotDirectoryPath)) {
       throw new Error(`[PuppeteerClient]: Directory does not exist: ${this.absoluteScreenshotDirectoryPath}`)
+    }
+
+    if (!fs.existsSync(this.amazonCookiesJsonPath)) {
+      throw new Error(`[PuppeteerClient]: File does not exist: ${this.amazonCookiesJsonPath}`)
     }
   }
 
@@ -45,6 +47,19 @@ export class PuppeteerClient {
   }
 
   openPageByUrl = async (url: string): Promise<void> => {
+    const amazonCookiesJson = JSON.parse(fs.readFileSync(this.amazonCookiesJsonPath, 'utf-8')) as {
+      name: string
+      value: string
+      domain: string
+      path: string
+      expires: number
+      size: number
+      httpOnly: boolean
+      secure: boolean
+      session: boolean
+      sameSite: 'Strict' | 'Lax' | 'None'
+    }[]
+
     await this.launchBrowser()
 
     if (!this.browser) {

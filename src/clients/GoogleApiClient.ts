@@ -3,6 +3,12 @@ import path from 'path'
 import { google, sheets_v4, drive_v3 } from 'googleapis'
 
 export class GoogleApiClient {
+  constructor(public readonly googleServiceAccountJsonPath: string) {
+    if (!fs.existsSync(this.googleServiceAccountJsonPath)) {
+      throw new Error(`google service account json is not found: ${this.googleServiceAccountJsonPath}`)
+    }
+  }
+
   private sheetsApi: sheets_v4.Sheets | null = null
 
   private driveApi: drive_v3.Drive | null = null
@@ -12,7 +18,7 @@ export class GoogleApiClient {
       return
     }
 
-    const serviceAccountCredentialJson = fs.readFileSync(path.join(__dirname, '../../../google-service-account.json'), 'utf-8')
+    const serviceAccountCredentialJson = fs.readFileSync(path.resolve(this.googleServiceAccountJsonPath), 'utf-8')
     const serviceAccountCredentials: unknown = JSON.parse(serviceAccountCredentialJson)
 
     if (

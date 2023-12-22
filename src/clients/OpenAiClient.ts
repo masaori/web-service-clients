@@ -3,16 +3,19 @@ import path from 'path'
 import { OpenAI } from 'openai'
 
 export class OpenAiClient {
-  private openAiClient: OpenAI
-
-  constructor() {
-    // './openapi_key.txt'
-    const OPENAI_API_KEY = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'openapi_key.txt'), 'utf8').trim()
+  constructor(public readonly openAiApiKeyFilePath: string) {
+    if (!path.isAbsolute(openAiApiKeyFilePath)) {
+      throw new Error(`openai api key file path must be absolute: ${openAiApiKeyFilePath}`)
+      
+    }
+    const OPENAI_API_KEY = fs.readFileSync(openAiApiKeyFilePath, 'utf-8').trim()
 
     this.openAiClient = new OpenAI({
       apiKey: OPENAI_API_KEY,
     })
   }
+
+  private openAiClient: OpenAI
 
   createEmbedding = async (text: string) => {
     const result = await this.openAiClient.embeddings.create({

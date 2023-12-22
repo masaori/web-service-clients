@@ -3,8 +3,14 @@ import { ImageAnnotatorClient } from '@google-cloud/vision'
 import { google } from '@google-cloud/vision/build/protos/protos'
 
 export class GoogleCloudVisionClient {
+  constructor(public readonly googleServiceAccountJsonPath: string) {
+    if (!path.isAbsolute(googleServiceAccountJsonPath)) {
+      throw new Error(`google service account json path must be absolute: ${googleServiceAccountJsonPath}`)
+    }
+  }
+
   private googleCloudVisionClient = new ImageAnnotatorClient({
-    keyFilename: path.resolve('./google-service-account.json'),
+    keyFilename: this.googleServiceAccountJsonPath,
   })
 
   private fullTextAnnotationByImagePath: Record<string, google.cloud.vision.v1.IPage> = {}
